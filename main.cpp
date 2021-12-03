@@ -4,42 +4,47 @@
 
 using namespace std;
 
-int main() {
-    string in;
-    getline(cin, in, static_cast<char>(EOF));
+int N = 105;
 
-    vector<pair<int, int>> scores11(1);
-    vector<pair<int, int>> scores21(1);
-    int a = 0, b = 0;
-    for (int i = 0; i < (int)in.length() && in[i] != 'E';i++) {
-        if (in[i] == '\n')
-            continue;
+void f1() {
+    int t, r, c;
+    cin >> t;
+    int f[N][N], w[N][N];
+    while (t--) {
+        cin >> r >> c;
+        for (int i = 1; i <= r; i++) {
+            for (int j = 1; j <= c; j++) {
+                cin >> w[i][j];
+            }
+        }
 
-        if (in[i] == 'W') {
-            scores11[a].first++;
-            scores21[b].first++;
-        } else if (in[i] == 'L') {
-            scores11[a].second++;
-            scores21[b].second++;
-        }
-        auto p11 = scores11[a];
-        auto p21 = scores21[b];
+        for (int i = 1; i <= r; i++)
+            for (int j = 1; j <= c; j++)
+                f[i][j] = max(f[i - 1][j] + w[i][j], f[i][j - 1] + w[i][j]);
 
-        if ((p11.first > 10 && p11.first - p11.second > 1) || (p11.second > 10 && p11.second - p11.first > 1)) {
-            a++;
-            scores11.emplace_back(0, 0);
-        }
-        if ((p21.first > 20 && p21.first - p21.second > 1) || (p21.second > 20 && p21.second - p21.first > 1)) {
-            b++;
-            scores21.emplace_back(0, 0);
-        }
+        cout << f[r][c] << endl;
     }
+}
 
-    for (auto & i : scores11)
-        cout << i.first << ":" << i.second << endl;
-    cout << endl;
-    for (auto & i : scores21)
-        cout << i.first << ":" << i.second << endl;
+void f2() {
+    int t, r, c;
+    int w[2][N], f[2][N];
+    memset(f, 0, sizeof f);
+    cin >> t;
+    while (t--) {
+        cin >> r >> c;
+        for (int i = 1; i <= r; i++) {
+            for (int j = 1; j <= c; j++) {
+                cin >> w[i & 1][j];
+                f[i & 1][j] = max(f[(i - 1) & 1][j], f[i & 1][j - 1]) + w[i & 1][j];
+            }
+        }
+        cout << f[r & 1][c] << endl;
+        memset(f, 0, sizeof f);
+    }
+}
 
+int main() {
+    f2();
     return 0;
 }
