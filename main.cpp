@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 #include <vector>
 //#include <algorithm>
 
@@ -6,28 +7,25 @@ using namespace std;
 
 
 void f2() {
-    int N = 110;
-    int w[N], v[N], dp[2][1100];
+    int dp[1100] = {0};
+    int n, x;
+    cin >> n >> x;
 
-    memset(dp, 0, sizeof dp);
-    int t, m;
-    cin >> t >> m;
+    int w[2000], win[2000], fail[2000];
     /**
-     * 表示 max 经验值 + 药数量
-     * f[i][j] = max(f[i-1][j], f[) + w[i][j]
+     * 01背包
      */
-    for (int i = 1; i <= m; i++)
-        cin >> w[i] >> v[i];
-
-    for (int i = 1; i <= m; i++) {
-        for (int j = 1; j <= t; j++) {
+    for (int i = 1; i <= n; i++) {
+        cin >> fail[i] >> win[i] >> w[i];
+        // 压缩到一维时须从后向前推（否则后面的 j 使用的 j-w[i] 不是 i-1 行的）
+        for (int j = x; j >= 0; j--) {
             if (j < w[i])
-                dp[i & 1][j] = dp[(i - 1) & 1][j];
+                dp[j] += fail[i];
             else
-                dp[i & 1][j] = max(dp[(i - 1) & 1][j], dp[(i - 1) & 1][j - w[i]] + v[i]);
+                dp[j] = max(dp[j] + fail[i], dp[j-w[i]] + win[i]);
         }
     }
-    cout << dp[m & 1][t] << endl;
+    cout << dp[x] * 5ll << endl;
 }
 
 int main() {
