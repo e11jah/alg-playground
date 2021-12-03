@@ -1,47 +1,29 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
+//#include <algorithm>
 
 using namespace std;
 
-int N = 105;
-
-void f1() {
-    int t, r, c;
-    cin >> t;
-    int f[N][N], w[N][N];
-    while (t--) {
-        cin >> r >> c;
-        for (int i = 1; i <= r; i++) {
-            for (int j = 1; j <= c; j++) {
-                cin >> w[i][j];
-            }
-        }
-
-        for (int i = 1; i <= r; i++)
-            for (int j = 1; j <= c; j++)
-                f[i][j] = max(f[i - 1][j] + w[i][j], f[i][j - 1] + w[i][j]);
-
-        cout << f[r][c] << endl;
-    }
-}
-
 void f2() {
-    int t, r, c;
-    int w[2][N], f[2][N];
+    int N = 501;
+    int r;
+    int w[N][N], f[N][N];
     memset(f, 0, sizeof f);
-    cin >> t;
-    while (t--) {
-        cin >> r >> c;
-        for (int i = 1; i <= r; i++) {
-            for (int j = 1; j <= c; j++) {
-                cin >> w[i & 1][j];
-                f[i & 1][j] = max(f[(i - 1) & 1][j], f[i & 1][j - 1]) + w[i & 1][j];
-            }
+
+    cin >> r;
+
+    for (int i = 1; i <= r; i++) {
+        for (int j = 1; j <= i; j++) {
+            cin >> w[i][j];
         }
-        cout << f[r & 1][c] << endl;
-        memset(f, 0, sizeof f);
     }
+
+    for (int i = r; i > 0; i--)
+        for (int j = 1; j <= i; j++)
+            f[i][j] = max(f[i+1][j], f[i+1][j+1]) + w[i][j];
+
+
+    cout << f[1][1] << endl;
 }
 
 int main() {
