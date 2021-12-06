@@ -1,31 +1,35 @@
 #include <iostream>
-#include <cstring>
 #include <vector>
-//#include <algorithm>
 
 using namespace std;
 
 
 void f2() {
-    int dp[1100] = {0};
-    int n, x;
-    cin >> n >> x;
+    ios::sync_with_stdio(false);
+    int A[2001] = {0}, B[2001] = {0}, V[4004] = {0};
+    string a, b;
 
-    int w[2000], win[2000], fail[2000];
-    /**
-     * 01背包
-     */
-    for (int i = 1; i <= n; i++) {
-        cin >> fail[i] >> win[i] >> w[i];
-        // 压缩到一维时须从后向前推（否则后面的 j 使用的 j-w[i] 不是 i-1 行的）
-        for (int j = x; j >= 0; j--) {
-            if (j < w[i])
-                dp[j] += fail[i];
-            else
-                dp[j] = max(dp[j] + fail[i], dp[j-w[i]] + win[i]);
-        }
+    cin >> a >> b;
+    int al = a.length(), bl = b.length(), len = al +bl;
+
+    for (int i = al - 1; i >= 0; i--)
+        A[al-i] = a[i] - '0';
+    for (int i = bl - 1; i >= 0; i--)
+        B[bl-i] = b[i] - '0';
+
+    for (int i = 1; i <= al; i++)
+        for (int j = 1; j <= bl; j++)
+            V[j + i - 1] += A[i] * B[j];
+
+    for (int i = 1; i <= len; i++) {
+        V[i+1] += V[i] / 10;
+        V[i] %= 10;
     }
-    cout << dp[x] * 5ll << endl;
+    while (!V[len])
+        len--;
+
+    for (int i = max(1, len); i > 0; i--)
+        cout << V[i];
 }
 
 int main() {
