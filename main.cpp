@@ -3,47 +3,45 @@
 using namespace std;
 
 string add(string a, string b) {
-    int al = a.length(), bl = b.length(), ml = max(al, bl);
-    int *A = new int[ml], *B = new int[ml];
-    int *V = new int[ml + 1];
-
-    for (int i = al - 1; i >= 0; i--)
-        A[al - i] = a[i] - '0';
-
-    for (int i = bl - 1; i >= 0; i--)
-        B[bl - i] = b[i] - '0';
-
-    for (int i = 1; i <= ml; i++) {
-        V[i] += (A[i] + B[i]);
-        V[i + 1] = V[i] / 10;
-        V[i] %= 10;
+    string ret, tmp;
+    int t = 0;
+    if (b.size() > a.size()) {
+        tmp = a;
+        a = b;
+        b = tmp;
     }
-    if (V[ml + 1])
-        ml++;
-    string res;
-    for (int i = ml; i > 0; i--)
-        res.append(to_string(V[i]));
-    return res;
+    reverse(a.begin(), a.end());
+    reverse(b.begin(), b.end());
+
+    for (int i = 0; i < a.size(); i++) {
+        t += a[i] - '0';
+        if (i < b.size())
+            t += b[i] - '0';
+        ret.push_back('0' + (t % 10));
+        t /= 10;
+    }
+    if (t)
+        ret.push_back('0' + t);
+    reverse(ret.begin(), ret.end());
+    return ret;
 }
 
 string mul(string a, int b) {
-    int al = a.length(), l = al *2;
-    int *A = new int[al], *V = new int[l];
-    for (int i = al - 1; i >= 0; i--)
-        A[al - i] = a[i] - '0';
+    string ret;
+    int t = 0;
+    reverse(a.begin(), a.end());
 
-    for (int i = 1; i <= al; ++i) {
-        V[i] += A[i] * b;
-        V[i + 1] = V[i] / 10;
-        V[i] %= 10;
+    for (int i = 0; i < a.size(); i++) {
+        t += (a[i] - '0') * b;
+        ret.push_back('0' + (t % 10));
+        t /= 10;
     }
-    while (!V[l])
-        l--;
-
-    string res;
-    for (int i = max(1, l); i > 0; i--)
-        res.append(to_string(V[i]));
-    return res;
+    while (t) {
+        ret.push_back('0' + (t % 10));
+        t /= 10;
+    }
+    reverse(ret.begin(), ret.end());
+    return ret;
 }
 
 int main() {
