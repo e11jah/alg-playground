@@ -1,45 +1,43 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
-int r, c;
-char mx[101][101];
-int visit_[101][101] = {0};
-int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1}, dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
-
-void dfs(int i, int j) {
-    if (i < 0 || i >= r || j < 0 || j >= c)
-        return;
-
-    if (visit_[i][j])
-        return;
-    visit_[i][j] = 1;
-
-    int x, y, cnt = 0;
-    for (int k = 0; k < 8; k++) {
-        x = i + dx[k];
-        y = j + dy[k];
-        if (x >= 0 && x < r && y >= 0 && y < c && mx[x][y] == '*') {
-            cnt++;
-        }
-        dfs(x, y);
-    }
-    if (mx[i][j] != '*')
-        mx[i][j] = char('0' + cnt);
+int mod_negative(int a, int b) {
+    return (b + (a%b)) % b;
 }
-
+//bits/stdc++.h
 int main() {
     ios::sync_with_stdio(false);
-    cin >> r >> c;
-    for (int i = 0; i < r; i++)
-        for (int j = 0; j < c; j++)
-            cin >> mx[i][j];
+    int n, m;
+    cin >> n >> m;
 
-    dfs(0, 0);
-    for (int i = 0; i < r; i++) {
-        for (int j = 0; j < c; j++)
-            cout << mx[i][j];
-        cout << endl;
+    vector<pair<string, int>> people;
+    people.reserve(n);
+    int cur, right, cnt;
+    string tmp;
+
+    for (int i = 0; i < n; i++) {
+        cin >> cur >> tmp;
+        people.emplace_back(tmp, cur);
     }
+    cur = 0;
+    for (int i = 0; i < m; i++) {
+        cin >> right >> cnt;
+        // 朝内
+        if (!people[cur].second) {
+            // 向左 = 向上
+            if (!right)
+                cur = (cur + mod_negative(-cnt, n)) % n;
+            else// 向右 = 向下
+                cur = (cur + cnt) % n;
+        } else {// 朝外
+            if (!right)// 向左 = 向下
+                cur = (cur + cnt) % n;
+            else// 向右 = 向上
+                cur = (cur + mod_negative(-cnt, n)) % n;
+        }
+    }
+    cout << people[cur].first;
     return 0;
 }
