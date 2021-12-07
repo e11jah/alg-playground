@@ -2,61 +2,44 @@
 
 using namespace std;
 
-string add(string a, string b) {
-    string ret, tmp;
-    int t = 0;
-    if (b.size() > a.size()) {
-        tmp = a;
-        a = b;
-        b = tmp;
-    }
-    reverse(a.begin(), a.end());
-    reverse(b.begin(), b.end());
+int r, c;
+char mx[101][101];
+int visit_[101][101] = {0};
+int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1}, dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
 
-    for (int i = 0; i < a.size(); i++) {
-        t += a[i] - '0';
-        if (i < b.size())
-            t += b[i] - '0';
-        ret.push_back('0' + (t % 10));
-        t /= 10;
-    }
-    if (t)
-        ret.push_back('0' + t);
-    reverse(ret.begin(), ret.end());
-    return ret;
-}
+void dfs(int i, int j) {
+    if (i < 0 || i >= r || j < 0 || j >= c)
+        return;
 
-string mul(string a, int b) {
-    string ret;
-    int t = 0;
-    reverse(a.begin(), a.end());
+    if (visit_[i][j])
+        return;
+    visit_[i][j] = 1;
 
-    for (int i = 0; i < a.size(); i++) {
-        t += (a[i] - '0') * b;
-        ret.push_back('0' + (t % 10));
-        t /= 10;
+    int x, y, cnt = 0;
+    for (int k = 0; k < 8; k++) {
+        x = i + dx[k];
+        y = j + dy[k];
+        if (x >= 0 && x < r && y >= 0 && y < c && mx[x][y] == '*') {
+            cnt++;
+        }
+        dfs(x, y);
     }
-    while (t) {
-        ret.push_back('0' + (t % 10));
-        t /= 10;
-    }
-    reverse(ret.begin(), ret.end());
-    return ret;
+    if (mx[i][j] != '*')
+        mx[i][j] = char('0' + cnt);
 }
 
 int main() {
     ios::sync_with_stdio(false);
-    int x;
-    string ans = "1";
-    string fact[55] = {""};
-    fact[1] = "1";
+    cin >> r >> c;
+    for (int i = 0; i < r; i++)
+        for (int j = 0; j < c; j++)
+            cin >> mx[i][j];
 
-    cin >> x;
-
-    for (int i = 2; i <= x; ++i) {
-        fact[i] = mul(fact[i - 1], i);
-        ans = add(ans, fact[i]);
+    dfs(0, 0);
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++)
+            cout << mx[i][j];
+        cout << endl;
     }
-    cout << ans;
     return 0;
 }
