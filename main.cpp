@@ -1,43 +1,77 @@
+//#include <bits/stdc++.h>
 #include <iostream>
-#include <vector>
 
 using namespace std;
 
-int mod_negative(int a, int b) {
-    return (b + (a%b)) % b;
+int mx[505][505];
+int tmp[505][505];
+
+void rotate_mx(int x, int y, int n) {
+    if (n == 1)
+        return;
+
+    for (int i = x; i < x + n; i++)
+        for (int j = y; j < y + n; j++)
+            tmp[i][j] = mx[i][j];
+
+    int x1 = x + n-1, y1 = y;
+    for (int i = x; i < x + n; i++) {
+        for (int j = y; j < y + n; j++) {
+            mx[i][j] = tmp[x1][y1];
+            x1--;
+        }
+        x1 = x + n-1;
+        y1++;
+    }
 }
+
+void anticlockwise_rotate_mx(int x, int y, int n) {
+    if (n == 1)
+        return;
+
+    for (int i = x; i < x + n; i++)
+        for (int j = y; j < y + n; j++)
+            tmp[i][j] = mx[i][j];
+
+    int x1 = x, y1 = y + n-1;
+    for (int i = x; i < x + n; i++) {
+        for (int j = y; j < y + n; j++) {
+            mx[i][j] = tmp[x1][y1];
+            x1++;
+        }
+        y1--;
+        x1 = x;
+    }
+}
+
+void print_mx(int x, int y, int n) {
+    for (int i = x; i < x + n; i++) {
+        for (int j = y; j < y + n; j++)
+            cout << mx[i][j] << " ";
+        cout << endl;
+    }
+    cout << endl;
+}
+
 //bits/stdc++.h
 int main() {
     ios::sync_with_stdio(false);
     int n, m;
     cin >> n >> m;
 
-    vector<pair<string, int>> people;
-    people.reserve(n);
-    int cur, right, cnt;
-    string tmp;
+    int t = 1;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            mx[i][j] = t++;
 
-    for (int i = 0; i < n; i++) {
-        cin >> cur >> tmp;
-        people.emplace_back(tmp, cur);
-    }
-    cur = 0;
+    int x, y, r, z;
     for (int i = 0; i < m; i++) {
-        cin >> right >> cnt;
-        // 朝内
-        if (!people[cur].second) {
-            // 向左 = 向上
-            if (!right)
-                cur = (cur + mod_negative(-cnt, n)) % n;
-            else// 向右 = 向下
-                cur = (cur + cnt) % n;
-        } else {// 朝外
-            if (!right)// 向左 = 向下
-                cur = (cur + cnt) % n;
-            else// 向右 = 向上
-                cur = (cur + mod_negative(-cnt, n)) % n;
-        }
+        cin >> x >> y >> r >> z;
+        if (!z)
+            rotate_mx(x - r - 1, y - r - 1, 2 * r + 1);
+        else
+            anticlockwise_rotate_mx(x - r - 1, y - r - 1, 2 * r + 1);
     }
-    cout << people[cur].first;
+    print_mx(0, 0, n);
     return 0;
 }
