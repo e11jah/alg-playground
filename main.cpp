@@ -1,24 +1,36 @@
 //#include <bits/stdc++.h>
 #include <iostream>
-#include <vector>
 
 using namespace std;
 
-//bits/stdc++.h
+int mx[101][101], dis[101][101], r, c, m=0;
+int dx[4] = {0, 0, 1, -1}, dy[4] = {1, -1, 0, 0};
+int dfs(int i, int j) {
+    if (dis[i][j])
+        return dis[i][j];
+    dis[i][j] = 1;
+    int x, y;
+    for (int k = 0; k < 4; k++) {
+        x = i+dx[k], y = j + dy[k];
+        if (x < 0 || x >= r || y < 0 || y >= c
+            || mx[i][j] <= mx[x][y])
+            continue;
+        dfs(x,y);
+        dis[i][j] = max(dis[i][j], 1+dis[x][y]);
+    }
+    return dis[i][j];
+}
+
 int main() {
-    ios::sync_with_stdio(false);
-    int mx[2][1001];
-    int r, m = 0, t;
-    cin >> r;
-    memset(mx, 0, sizeof mx);
-    for (int i = 1; i <= r; i++)
-        for (int j = 1; j <= i; j++) {
-            cin >> t;
-            mx[i&1][j] = t + max(mx[(i-1)&1][j], mx[(i-1)&1][j-1]);
-            m = max(m, mx[i&1][j]);
-        }
+    memset(dis, 0, sizeof dis);
+    cin >> r >> c;
+    for (int i = 0; i < r; i++)
+        for (int j = 0; j < r; j++)
+            cin >> mx[i][j];
 
+    for (int i = 0; i < r; i++)
+        for (int j = 0; j < c; j++)
+            m = max(m, dfs(i, j));
     cout << m;
-
     return 0;
 }
