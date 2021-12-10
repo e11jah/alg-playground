@@ -1,36 +1,53 @@
 //#include <bits/stdc++.h>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
-int mx[101][101], dis[101][101], r, c, m=0;
-int dx[4] = {0, 0, 1, -1}, dy[4] = {1, -1, 0, 0};
-int dfs(int i, int j) {
-    if (dis[i][j])
-        return dis[i][j];
-    dis[i][j] = 1;
-    int x, y;
-    for (int k = 0; k < 4; k++) {
-        x = i+dx[k], y = j + dy[k];
-        if (x < 0 || x >= r || y < 0 || y >= c
-            || mx[i][j] <= mx[x][y])
-            continue;
-        dfs(x,y);
-        dis[i][j] = max(dis[i][j], 1+dis[x][y]);
+int c[21][21], m[21], v[21], path[21], n;
+
+int dfs(int i) {
+    if (m[i])
+        return m[i];
+
+    m[i] = v[i];
+
+    int t;
+    for (int k = 1; k <= n; k++) {
+        if (c[i][k]) {
+            dfs(k);
+            t = v[i] + m[k];
+            if (t > m[i])
+                // path[idx] 记录下一个最大的地窖
+                path[i] = k;
+            m[i] = max(m[i],t);
+        }
     }
-    return dis[i][j];
+
+    return m[i];
 }
 
 int main() {
-    memset(dis, 0, sizeof dis);
-    cin >> r >> c;
-    for (int i = 0; i < r; i++)
-        for (int j = 0; j < r; j++)
-            cin >> mx[i][j];
+    memset(c, 0, sizeof c);
+    cin >> n;
+    for (int i = 1; i <=n; i++)
+        cin >> v[i];
 
-    for (int i = 0; i < r; i++)
-        for (int j = 0; j < c; j++)
-            m = max(m, dfs(i, j));
-    cout << m;
+    for (int i = 1; i < n; i++)
+        for (int j = i+1; j <= n; j++)
+            cin >> c[i][j];
+    int t, s, res = 0;
+    for (int i= 1; i <= n; i++) {
+        t = dfs(i);
+        if (t > res) {
+            res = t;
+            s = i;
+        }
+    }
+    for (int i = s; i != 0;) {
+        cout << i << " ";
+        i = path[i];
+    }
+    cout << endl << res;
     return 0;
 }
