@@ -4,50 +4,36 @@
 
 using namespace std;
 
-int c[21][21], m[21], v[21], path[21], n;
-
-int dfs(int i) {
-    if (m[i])
-        return m[i];
-
-    m[i] = v[i];
-
-    int t;
-    for (int k = 1; k <= n; k++) {
-        if (c[i][k]) {
-            dfs(k);
-            t = v[i] + m[k];
-            if (t > m[i])
-                // path[idx] 记录下一个最大的地窖
-                path[i] = k;
-            m[i] = max(m[i],t);
-        }
-    }
-
-    return m[i];
-}
-
 int main() {
-    memset(c, 0, sizeof c);
-    cin >> n;
-    for (int i = 1; i <=n; i++)
-        cin >> v[i];
+    using PII = pair<int, int>;
+    int n, t;
+    cin >> n >> t;
+    // mi, vi
+    vector<PII> wv(n);
 
-    for (int i = 1; i < n; i++)
-        for (int j = i+1; j <= n; j++)
-            cin >> c[i][j];
-    int t, s, res = 0;
-    for (int i= 1; i <= n; i++) {
-        t = dfs(i);
-        if (t > res) {
-            res = t;
-            s = i;
+    for (int i = 0; i < n; i++)
+        cin >> wv[i].first >> wv[i].second;
+
+    sort(wv.begin(), wv.end(), [&](const PII l, const PII r) -> bool {
+        // tips 分数比较大小
+        return  l.second * r.first > r.second * l.first;
+    });
+
+    // 6 5 4 3
+    // 40 - 20 + 20  s = 60 + 100 + 80 = 240
+    double s = 0;
+    for (PII p : wv) {
+        if (!t)
+            break;
+        if (t >= p.first) {
+            t -= p.first;
+            s += 1.0 * p.second;
+        } else {
+            s += 1.0 * t / p.first * p.second;
+            t -= t;
         }
     }
-    for (int i = s; i != 0;) {
-        cout << i << " ";
-        i = path[i];
-    }
-    cout << endl << res;
+    cout.precision(2);
+    cout << fixed << s;
     return 0;
 }
