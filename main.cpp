@@ -5,28 +5,25 @@
 using namespace std;
 
 int main() {
-    // 使用 pair 记录 idx
     using PII = pair<int, int>;
-    int n, t;
-    long long s = 0;
+    int n;
+    int s = 0;
     cin >> n;
-    vector<PII> arr(n);
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i].first;
-        arr[i].second = i+1;
-    }
+    vector<PII> v(n);
+    for (int i = 0; i < n; i++)
+        cin >> v[i].first >> v[i].second;
 
-    stable_sort(arr.begin(), arr.end(), [](PII l, PII r) -> bool {
-        return l.first < r.first;
+    stable_sort(v.begin(), v.end(), [](PII l, PII r) -> bool {
+        // 优先选择先结束的比赛
+        return l.second < r.second;
     });
-    t = n-1;
-    for (PII e : arr) {
-        s += t * e.first;
-        t--;
-        cout << e.second << " ";
+    int curEnd = 0;
+    for (PII e : v) {
+        if (e.first < curEnd)
+            continue;
+        s++;
+        curEnd = e.second;
     }
-    // cout.precision(2);
-    // cout << endl << fixed << (double) s / n;
-    printf("\n%.2lf",  (double) s / n);
+    cout << s;
     return 0;
 }
