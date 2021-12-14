@@ -5,25 +5,28 @@
 
 using namespace std;
 
+using long long = ll;
 int main() {
     int n, m;
+    long long ans = 0;
     cin >> n >> m;
-    int mx[1001][1001];
-    memset(mx, 0, sizeof mx);
-    int x1, y1, x2, y2;
-    for (int i =0 ; i< m; i++) {
-        cin >> x1 >> y1 >> x2 >> y2;
 
-        for (int x = x1 - 1; x < x2; x++)
-            for (int y = y1 - 1; y < y2; y++)
-                mx[x][y]++;
+    vector<int> v(n);
+    cin >> v[0];
+    int preSum = v[0];
+    for (int i = 1; i < n; i++) {
+        cin >> v[i];
+        preSum += v[i];
+        if (preSum > m) {
+            preSum -= m;
+            ans += preSum;
+            preSum = v[i] > preSum ? v[i]-preSum : 0;
+        } else
+            preSum = v[i];
     }
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++)
-            cout << mx[i][j] << " ";
-        cout << endl;
-    }
+    if (ans < 1)
+        ans = 1;
+    cout << ans;
 
     return 0;
 }
