@@ -6,15 +6,20 @@
 using namespace std;
 
 int main() {
-    int n, d = 0;
+    int n, m = -(1<<30), s = 0;
     cin >> n;
-    int arr[100005];
-    for (int i = 0; i < n; i++)
-        cin >> arr[i];
-    for (int i = 1; i < n; i++)
-        d = arr[i] >  arr[i-1] ? d + arr[i]-arr[i-1] : d;
 
-    cout << d + arr[0];
+    vector<int> v(n);
+    for (int i = 0; i < n; i++) {
+        cin >> v[i];
+        if (s > 0)
+            s += v[i];
+        else
+            s = v[i];
 
+        m = m > s ? m : s;
+    }
+
+    cout << m;
     return 0;
 }
