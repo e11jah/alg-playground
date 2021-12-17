@@ -8,54 +8,38 @@ using namespace std;
 
 typedef long long ll;
 
-void v1() {
-    int n, cur, m, mi, t;
-    ll ans = 0;
-    cin >> n;
-    vector<int> v(n);
-    for (int i = 0; i < n; i++)
-        cin >> v[i];
-    sort(v.begin(), v.end(), [](int l, int r) {
-        return l < r;
-    });
-    cur = v[n-1];
-    ans += cur * cur;
-    v.pop_back();
-    for (int j = 1; j < n; j++) {
-        m = 0;
-        for (int i = 0; i < v.size(); i++) {
-            t = abs(cur - v[i]);
-            if (t > m)
-                m = t, mi = i;
-        }
-        ans += m * m;
-        cur = v[mi];
-        v.erase(v.begin()+mi);
+int memo[5005], in[5005], MOD = 80112002, ans = 0;
+
+int dfs(const vector<vector<int>> &mp, int i) {
+    if (mp[i].empty())
+        return memo[i] = 1;
+
+    int m = 0;
+    for (int e : mp[i]) {
+        m += memo[e] ? memo[e] : dfs(mp, e);
+        m %= MOD;
     }
-    cout << ans;
+
+    return memo[i] = m;
 }
+
 int main() {
-    int n;
-    ll ans = 0;
-    cin >> n;
-    vector<int> arr(301, 0);
-    for (int i = 1; i <= n; i++)
-        cin >> arr[i];
-    sort(arr.begin()+1, arr.begin()+n+1);
+    int n, m, a, b;
+    cin >> n >> m;
+    memset(memo, 0, sizeof memo);
+    memset(in, 0, sizeof in);
+    vector<vector<int>> mp(n + 1);
 
-    int l = 0, r = n, k=1, t;
-    while (l < r) {
-        t = arr[r] - arr[l];
-        ans += t * t;
-        // 奇数次 左跳右, 下次反之
-        if (k&1)
-            l++;
-        // 偶数次 右跳左
-        else
-            r--;
-        k++;
+    for (int i = 0; i < m; i++) {
+        cin >> a >> b;
+        in[a]++;
+        mp[b].push_back(a);
     }
-    cout << ans;
 
+    for (int i = 1; i <= n; i++)
+        if (!in[i])
+            ans = (ans + dfs(mp, i)) % MOD;
+
+    cout << ans;
     return 0;
 }
