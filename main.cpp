@@ -6,40 +6,39 @@
 
 using namespace std;
 
+using PII = pair<int, int>;
 typedef long long ll;
 
-int memo[5005], in[5005], MOD = 80112002, ans = 0;
-
-int dfs(const vector<vector<int>> &mp, int i) {
-    if (mp[i].empty())
-        return memo[i] = 1;
-
-    int m = 0;
-    for (int e : mp[i]) {
-        m += memo[e] ? memo[e] : dfs(mp, e);
-        m %= MOD;
-    }
-
-    return memo[i] = m;
-}
 
 int main() {
-    int n, m, a, b;
+    int n, m, a, b, c;
     cin >> n >> m;
-    memset(memo, 0, sizeof memo);
-    memset(in, 0, sizeof in);
-    vector<vector<int>> mp(n + 1);
 
+    vector<int> d(n);
+
+    int pre, p;
     for (int i = 0; i < m; i++) {
-        cin >> a >> b;
-        in[a]++;
-        mp[b].push_back(a);
+        cin >> p;
+        // i > 0
+        if (i) {
+            // 记录访问次数差分
+            if (p > pre)
+                d[pre]++, d[p]--;
+            else
+                d[p]++, d[pre]--;
+        }
+        pre = p;
     }
-
-    for (int i = 1; i <= n; i++)
-        if (!in[i])
-            ans = (ans + dfs(mp, i)) % MOD;
-
+    ll times = 0, ans = 0, t;
+    for (int i = 1; i < n; i++) {
+        cin >> a >> b >> c;
+        // times[i] 表 从 i 到 i + 1 的访问次数
+        // times[i] = times[i-1] + d[i];
+        times += d[i];
+        t = times * b + c;
+        ans += t > a * times ? a * times : t;
+    }
     cout << ans;
+
     return 0;
 }
