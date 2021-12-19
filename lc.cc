@@ -5,27 +5,33 @@ using namespace std;
 
 class Solution {
 public:
-    // 等差求和
-    long long sum(long long x) {
-        return (1 + x) * x / 2;
-    }
-    long long getDescentPeriods(vector<int>& prices) {
-        int n = prices.size(), cur = 0;
-        long long ans = n;
-        int l = 1;
 
-        for (int i = 1; i < n; i++) {
-            if (prices[i] + 1== prices[i-1]) {
-                l++;
-            } else {
-                ans += sum(l-1);
-                l = 1;
-            }
+    int lis(vector<int> v) {
+        vector<int> l;
+        for (int e : v) {
+            // uppper_bound >= x 的第一个
+            // lower_bound > x 的第一个
+            auto it = upper_bound(l.begin(), l.end(), e);
+            if (it == l.end())
+                l.push_back(e);
+            else
+                // 找到 >= e 的第一个元素，对其修改（以便将后续元素计算进此序列中）
+                *it = e;
         }
-        if (l > 1)
-            ans += sum(l-1);
+        return l.size();
+    }
+    int kIncreasing(vector<int>& arr, int k) {
+        int n = arr.size(), ans = 0;
+        // arr[i-k] <= arr[i] 间隔为 k 的子序列
+        vector<int> karr;
+        for (int i = 0; i < k; i++) {
+            karr.clear();
+            for (int j = i; j < n; j += k)
+                karr.push_back(arr[j]);
 
-        return ans;
+            ans += lis(karr);
+        }
+        return n - ans;
     }
 };
 
