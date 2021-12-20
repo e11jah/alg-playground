@@ -9,42 +9,26 @@ using namespace std;
 using PII = pair<int, int>;
 typedef long long ll;
 
-
-bool check(vector<int> loc, int mid, int m) {
-    int pre = 0,n = 0;
-    for (int i = 1; i < loc.size(); i++) {
-        if (loc[i] - pre < mid)
-            n++;
-        else
-            pre = loc[i];
-    }
-    return n <= m;
-}
-
 int main() {
-    int tl, n, m;
-    cin >> tl >> n >> m;
-    if (n == m) {
-        cout << tl;
-        return 0;
+    int h, l1 = 0, l2 = 0;
+    vector<int> v, idx, remains;
+    while (cin >> h) {
+        v.push_back(h);
     }
-    vector<int> loc(n + 2);
-
-    for (int i = 1; i <= n; i++)
-        cin >> loc[i];
-
-    loc[n + 1] = tl;
-    // https://www.luogu.com.cn/blog/HOJQVFNA/qian-tan-er-fen-di-bian-jie-wen-ti
-    int l = 1, r = tl, mid;
-    // 不记录 mid 时 使用 l < r
-    while (l < r) {
-        mid = (l + r + 1) >> 1;
-        if (check(loc, mid, m))
-            // + 1 上移至 /2 处
-            l = mid;
+    int n = v.size();
+    vector<int> lds(n), lis(n);
+    lds[0] = lis[0] = v[0];
+    for (int i = 1; i < n; i++) {
+        if (lds[l1] >= v[i])
+            lds[++l1] = v[i];
         else
-            r = mid - 1;
+            // 默认只能对上升序列使用，对下降序列使用需更换为 greater
+            *upper_bound(lds.begin(), lds.begin()+l1, v[i], greater()) = v[i];
+
+        if (lis[l2] < v[i])
+            lis[++l2] = v[i];
+        else
+            *lower_bound(lis.begin(), lis.begin()+l2, v[i]) = v[i];
     }
-    cout << l;
-    return 0;
+    cout << l1+1 << endl << l2+1;
 }
