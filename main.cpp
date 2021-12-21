@@ -9,57 +9,33 @@ using namespace std;
 using PII = pair<int, int>;
 typedef long long ll;
 
-void v1() {
-    int n , k;
-    cin >> n >> k;
-    vector<PII> v(k);
-    vector<int> sum(n+1), dp(n+1);
-
-    for (int i = 0; i < k; i++) {
-        cin >> v[i].first >> v[i].second;
-        sum[v[i].first]++;
-    }
-    sort(v.begin(), v.end(), [](PII l, PII r) {
-        return l.first < r.first;
-    });
-    int cur = k-1;
-    // 按总分钟数从后往前遍历
-    for (int i = n; i > 0; i--) {
-        if (sum[i]<1)
-            // 无任务时取上一分钟的空闲时间 + 1
-            dp[i] = dp[i+1] + 1;
-        else for (int j = 0; j < sum[i]; j++) {
-                // 有任务时比较当前空闲时间与放弃该任务时的空闲时间
-                dp[i] = dp[i] > dp[i+v[cur].second] ? dp[i] : dp[i+v[cur].second];
-                cur--;
-            }
-    }
-    cout << dp[1];
-}
-
-/**
- * 二维数组免排序法
- */
-void v2() {
-    int n, k, a, b;
-    cin >> n >> k;
-    vector<vector<int>> v(n+1);
-    vector<int> dp(n+1);
-    for (int i = 0; i < k; i++) {
-        cin >> a >> b;
-        v[a].push_back(b);
-    }
-
-    for (int i = n; i > 0; i--) {
-        if (v[i].empty())
-            dp[i] = dp[i+1] + 1;
-        else for (int j = 0; j < v[i].size(); j++)
-            dp[i] = dp[i] > dp[i+v[i][j]] ? dp[i] : dp[i+v[i][j]];
-
-    }
-    cout << dp[1];
-}
 
 int main() {
-    v2();
+    string a, b;
+    cin >> a >> b;
+    int an = a.size(), bn = b.size();
+    vector<vector<int>> dp(an + 1, vector<int>(bn + 1));
+
+    // 处理边界情况 dp[0][i], dp[i][0] 都需要 i 次操作
+    for (int i = 0; i <= an; i++)
+        dp[i][0] = i;
+    for (int i = 0; i <= bn; i++)
+        dp[0][i] = i;
+    int c1, c2, c3;
+    for (int i = 1; i <= an; i++) {
+        for (int j = 1; j <= bn; j++) {
+            // 字符相同无需操作
+            if (a[i - 1] == b[j - 1])
+                dp[i][j] = dp[i - 1][j - 1];
+            else {
+                // c1 删除 a 的第 i 个字符
+                // c2 将字符串A的第i个字符替换成字符串B的第j个字符
+                // c3 在字符串A末添加字符串B的第j个字符
+                c1 = dp[i - 1][j] + 1, c2 = dp[i - 1][j - 1] + 1, c3 = dp[i][j - 1] + 1;
+                dp[i][j] = c1 < c3 ? c1 : c3;
+                dp[i][j] = dp[i][j] < c2 ? dp[i][j] : c2;
+            }
+        }
+    }
+    cout << dp[an][bn];
 }
