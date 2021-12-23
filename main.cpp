@@ -39,26 +39,32 @@ void unSolve() {
     cout << ans;
 }
 
+const int M = 1e9 + 7;
+const int B = 233;
+
+int get_hash(const string& s) {
+    int res = 0;
+    for (int i = 0; i < s.size(); ++i) {
+        // 对于字符串 xyz，其哈希函数值为 xb^2 + yb + z。
+        res = (ll)(res * B + s[i]) % M;
+    }
+    return res;
+}
+
+bool cmp(const string& s, const string& t) {
+    return get_hash(s) == get_hash(t);
+}
+
 int main() {
     // 向上取整做法，无余数 -1 结果加回
 //    cout << (2 / 4-1)+1 << endl;
-    int m, s, t;
-    cin >> m >> s >> t;
-    int s1 = 0, s2 = 0;
-    for (int i = 1; i <= t; i++) {
-        s2 += 17;
-        if (m >= 10)
-            s1 += 60, m -= 10;
-        else
-            m += 4;
-        if (s1 > s2)
-            s2 = s1;
-
-        if (s1 >= s || s2 >= s) {
-            cout << "Yes" << endl << i;
-            return 0;
-        }
+    int n;
+    cin >> n;
+    vector<string> v(n);
+    map<int, int> mp;
+    for (int i = 0; i < n; i++) {
+        cin >> v[i];
+        mp[get_hash(v[i])]++;
     }
-
-    cout << "No" << endl << max(s1, s2);
+    cout << mp.size();
 }
