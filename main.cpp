@@ -55,16 +55,42 @@ bool cmp(const string& s, const string& t) {
     return get_hash(s) == get_hash(t);
 }
 
+string mul(string a, int b) {
+
+}
+
+string add(string a, string b) {
+
+}
+
+
 int main() {
     // 向上取整做法，无余数 -1 结果加回
 //    cout << (2 / 4-1)+1 << endl;
-    int n;
-    cin >> n;
-    vector<string> v(n);
-    map<int, int> mp;
-    for (int i = 0; i < n; i++) {
-        cin >> v[i];
-        mp[get_hash(v[i])]++;
+    ll t, n, k, ans, d, c;
+    cin >> t;
+    vector<int> a;
+    while (t) {
+        cin >> n >> k;
+        a = vector<int>(n);
+        for (int i = 0; i < n; i++)
+            cin >> a[i];
+        ans = 0;
+        k++;
+        for (int i = 1; i <n && k; i++) {
+            d = (ll)pow(10, a[i]) - (ll)pow(10, a[i-1]);
+            c = d / pow(10, a[i-1]);
+            if (k >= c)
+                ans += d;
+            else
+                ans += k * (ll)pow(10, a[i-1]), c = k;
+            k -= c;
+        }
+        if (k)
+            ans += k * (ll)pow(10, a[n - 1]);
+
+        cout << ans << endl;
+
+        t--;
     }
-    cout << mp.size();
 }
