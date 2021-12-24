@@ -55,42 +55,49 @@ bool cmp(const string& s, const string& t) {
     return get_hash(s) == get_hash(t);
 }
 
-string mul(string a, int b) {
-
-}
-
-string add(string a, string b) {
-
-}
-
-
 int main() {
     // 向上取整做法，无余数 -1 结果加回
 //    cout << (2 / 4-1)+1 << endl;
-    ll t, n, k, ans, d, c;
-    cin >> t;
-    vector<int> a;
-    while (t) {
-        cin >> n >> k;
-        a = vector<int>(n);
-        for (int i = 0; i < n; i++)
-            cin >> a[i];
-        ans = 0;
-        k++;
-        for (int i = 1; i <n && k; i++) {
-            d = (ll)pow(10, a[i]) - (ll)pow(10, a[i-1]);
-            c = d / pow(10, a[i-1]);
-            if (k >= c)
-                ans += d;
-            else
-                ans += k * (ll)pow(10, a[i-1]), c = k;
-            k -= c;
-        }
-        if (k)
-            ans += k * (ll)pow(10, a[n - 1]);
 
-        cout << ans << endl;
+    ios::sync_with_stdio(false);
+    int n, r, N = 101 * 2;
+    // f[l, r] 表示把从 l 到 r 合并成一堆的最小代价
+    int mi[N][N], ma[N][N], s[N], a[N];
 
-        t--;
+    fill(&mi[0][0], &mi[N-1][N-1], INT_MAX);
+    memset(ma, 0, sizeof ma);
+    memset(s, 0, sizeof s);
+
+    cin >> n;
+    for (int i = 1; i <=n; i++) cin >> a[i], a[i+n] = a[i];
+    for (int i = 1; i <=2*n ; i++) {
+        // 把环存成一条链：即把T存成2*T
+        // 如：2 3 4 6 5 4 2 3 4 6 5 4 这样每次枚举i到i+n-1就可以了
+        s[i] = s[i - 1] + a[i];
+        // i - i 为 0 代价
+        mi[i][i] = ma[i][i] = 0;
     }
+
+    // 枚举长度，最大为 n
+    for (int len = 2; len <=n; len++) {
+        // 枚举起点 （断环为链, 终点小于 2n）
+        for (int l = 1; l + len-1 <= 2*n; l++) {
+            r = l + len -1;
+            // 枚举分割点
+            for (int k = l; k < r; k++) {
+//                printf("f[%d,%d]=%d; f[%d,%d]=%d; f[%d,%d]=%d; s=%d\n", l, r, mi[l][r], l, k, mi[l][k], k+1, r,
+//                       mi[k+1][r], s[r]-s[l-1]);
+                mi[l][r] = min(mi[l][r], mi[l][k] + mi[k+1][r] + s[r]-s[l-1]);
+                ma[l][r] = max(ma[l][r], ma[l][k] + ma[k+1][r] + s[r]-s[l-1]);
+
+            }
+        }
+    }
+    int maxAns = 0, minAns = INT_MAX;
+    for (int i = 1; i < n; i++) {
+        maxAns = maxAns > ma[i][i+n-1]? maxAns : ma[i][i+n-1];
+        minAns = minAns < mi[i][i+n-1]? minAns : mi[i][i+n-1];
+    }
+
+    cout << minAns << endl << maxAns;
 }
