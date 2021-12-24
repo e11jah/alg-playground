@@ -10,60 +10,44 @@ using namespace std;
 using PII = pair<int, int>;
 typedef long long ll;
 
-struct Loc {
-    int x, y, t;
-};
 
+const int N = 500;
+int mx[N][N], vis[N][N], ans = INT_MAX, dx[4] = {0, 0, -1, 1}, dy[4] = {1, -1, 0, 0};
+
+void dfs(int x, int y, int t) {
+    if (x < 0 || y < 0 || t >= mx[x][y] || t >= ans || t >= vis[x][y])
+        return;
+
+
+    vis[x][y] = t;
+    if (mx[x][y] == INT_MAX) {
+        ans = ans > t ? t : ans;
+        return;
+    }
+    for (int i = 0; i < 4; i++)
+        dfs(x + dx[i], y + dy[i], t + 1);
+}
 
 int main() {
 
     ios::sync_with_stdio(false);
-    int t, n, N = 1001, sec;
+    fill(&mx[0][0], &mx[N - 1][N - 1], INT_MAX);
+    fill(&vis[0][0], &vis[N - 1][N - 1], INT_MAX);
 
-    int mx[N][N], visit[N][N], x, y, found;
-    int dx[4] = {1, -1, 0, 0}, dy[4] = {0, 0, 1, -1};
-    vector<PII> p(2 * N - 2);
+    int m;
+    cin >> m;
+    int x, y, t;
+    for (int i = 0; i < m; i++) {
+        cin >> x >> y >> t;
+        mx[x][y] = min(mx[x][y], t);
 
-    Loc l{};
-    cin >> t;
-
-    while (t--) {
-        memset(mx, 0, sizeof mx);
-        memset(visit, 0, sizeof visit);
-        p.clear();
-        queue<Loc> q;
-        found = 0;
-
-        cin >> n;
-        for (int i = 1; i <= 2 * n - 2; i++)
-            cin >> p[i].first >> p[i].second;
-
-        q.push({1, 1, 0});
-        // 标记起点
-        visit[1][1] = 1;
-        while (!q.empty()) {
-            l = q.front();
-            q.pop();
-            if (l.x == n && l.y == n) {
-                found = 1;
-                break;
-            }
-
-            for (int k = 0; k < 4; k++) {
-                x = l.x + dx[k], y = l.y + dy[k];
-                if (x > 0 && x <= n && y > 0 && y <= n && visit[x][y] == 0) {
-                    q.push({x, y, l.t + 1});
-                    // 入队后标记访问，避免重复放入
-                    visit[x][y] = 1;
-                }
-            }
-            if (l.t > 0 && l.t <= 2 * n - 2)
-                visit[p[l.t].first][p[l.t].second] = 1;
-        }
-        if (found)
-            cout << "Yes" << endl;
-        else
-            cout << "No" << endl;
+        for (int j = 0; j < 4; j++)
+            if (x + dx[j] >= 0 && y + dy[j] >= 0)
+                mx[x + dx[j]][y+dy[j]] = min(mx[x+dx[j]][y+dy[j]], t);
     }
-
+    dfs(0, 0, 0);
+    if (ans == INT_MAX)
+        cout << -1;
+    else
+        cout << ans;
 }
