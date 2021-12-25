@@ -42,21 +42,24 @@ void parse(const string &s) {
 int main() {
 
     ios::sync_with_stdio(false);
-    int n, flag;
+    int n, r, N= 250, dp[N][N], ans = 0;
     cin >> n;
-    string s;
-    for (int i = 0; i < n; i++) {
-        cin >> s;
-        flag = 0;
-        // regex 超时
-        for (int j =0; s[j]&&!flag;j++)
-            // 只有 RC 法在数字后有字母
-            if (j&&isdigit(s[j-1])&&isupper(s[j]))
-                flag = 1;
-        if (!flag)
-            parse(s);
-        else
-            parseRC(s);
-    }
+    memset(dp, 0, sizeof dp);
+    // 不需要断环成链
+    for (int i = 1; i <= n; i++)
+        cin >> dp[i][i];
 
+
+    for (int len = 2; len <= n; len ++) {
+        for (int l = 1; l+len-1 <= n; l++) {
+            r = l + len-1;
+            for (int k = l; k < r; k++) {
+                if (dp[l][k] == dp[k+1][r] && dp[l][k] > 0) {
+                    dp[l][r] = max(dp[l][r], dp[l][k] + 1), ans = max(ans, dp[l][r]);
+//                    printf("dp[%d, %d], k: %d, %d ->dp[l][k]: %d\n", l, r, k, dp[l][r], dp[l][k]);
+                }
+            }
+        }
+    }
+    cout << ans;
 }
