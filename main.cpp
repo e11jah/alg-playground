@@ -5,54 +5,64 @@
 using namespace std;
 
 using PII = pair<int, int>;
+#define bll __int128
+
 typedef long long ll;
+
+const int N = 120;
+int m;
+bll pow2[N], memo[N][N], v[N];
+
+template<typename T>
+inline T
+read() {  // 声明 template 类,要求提供输入的类型T,并以此类型定义内联函数 read()
+    T sum = 0, fl = 1;  // 将 sum,fl 和 ch 以输入的类型定义
+    int ch = getchar();
+    for (; !isdigit(ch); ch = getchar())
+        if (ch == '-') fl = -1;
+    for (; isdigit(ch); ch = getchar()) sum = sum * 10 + ch - '0';
+    return sum * fl;
+}
+
+inline void write(__int128 x) {
+    static __int128 sta[35];
+    int top = 0;
+    do {
+        sta[top++] = x % 10, x /= 10;
+    } while (x);
+    while (top) putchar(sta[--top] + 48);  // 48 是 '0'
+}
 
 
 #define min3(a, b, c) min(a, min(b, c))
 #define max3(a, b, c) max(a, max(b, c))
+
+bll dfs(int l, int r) {
+    if (memo[l][r] > -1)
+        return memo[l][r];
+    if (r-l<1)
+        return memo[l][r] = v[l] * pow2[m-r+l];
+    return memo[l][r] = max(dfs(l + 1, r) + pow2[m - r + l] * v[l], dfs(l, r - 1) + pow2[m - r + l] * v[r]);
+}
+
 int main() {
-    ios::sync_with_stdio(false);
+//    ios::sync_with_stdio(false);
+//    std::cin.tie(nullptr);
+    int n;
+    bll ans = 0;
+    cin >> n >> m;
 
-    int n, r, N = 110, dp[N][N][2], ans = 0;
-    cin >> n;
-//    memset(dp, 0, sizeof dp);
-//    fill(&dp[0][0][0], &dp[N - 1][N - 1][1], INT_MIN);
-    for (int i = 0; i < N; i++)
-        for (int j = 0; j < N; j++)
-            dp[i][j][0] = INT_MAX, dp[i][j][1] = INT_MIN;
+    pow2[0] = 1;
+    for (int i = 1; i <= m; i++)
+        pow2[i] = 2 * pow2[i - 1];
 
-    char op[N];
     for (int i = 1; i <= n; i++) {
-        cin >> op[i] >> dp[i][i][0];
-        op[i+n] = op[i];
-        dp[i + n][i + n][0] = dp[i + n][i + n][1] = dp[i][i][1] = dp[i][i][0];
+        for (int j = 1; j <= m; j++)
+            v[j] = read<bll>();
+
+        memset(memo, -1, sizeof(memo));
+        ans += dfs(1, m);
     }
 
-    for (int len = 2; len <= n; len++) {
-        for (int l = 1; l + len - 1 <= 2 * n; l++) {
-            r = l + len - 1;
-            for (int k = l; k < r; k++) {
-
-                if (op[k + 1] == 't') {
-                    dp[l][r][0] = min(dp[l][r][0], dp[l][k][0] + dp[k + 1][r][0]);
-                    dp[l][r][1] = max(dp[l][r][1], dp[l][k][1] + dp[k + 1][r][1]);
-                } else {
-                    // 正负相乘得最小
-                    dp[l][r][0] = min3(dp[l][r][0], dp[l][k][1] * dp[k + 1][r][0], dp[l][k][0] * dp[k + 1][r][1]);
-                    // 负负、正正得最大
-                    dp[l][r][1] = max3(dp[l][r][1], dp[l][k][1] * dp[k + 1][r][1], dp[l][k][0] * dp[k + 1][r][0]);
-                }
-//                printf("dp[%d][%d]: %d; dp[%d][%d]: %d, dp[%d][%d]: %d, k:%d, op: %c, v: %d\n", l, r, dp[l][r],
-//                       l, k, dp[l][k], k + 1, r, dp[k + 1][r],
-//                       k, op[k+1], t);
-            }
-        }
-    }
-
-    for (int i = 1; i < n; i++)
-        ans = max(ans, dp[i][i + n - 1][1]);
-    cout << ans << endl;
-    for (int i = 1; i <= n; i++)
-        if (dp[i][i+n-1][1] == ans)
-            cout << i << " ";
+    write(ans);
 }
