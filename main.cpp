@@ -35,51 +35,30 @@ inline void write(__int128 x) {
 #define max3(a, b, c) max(a, max(b, c))
 
 int main() {
-//    ios::sync_with_stdio(false);
+    ios::sync_with_stdio(false);
+//    cin.tie(nullptr);
 //    std::cin.tie(nullptr);
-    int n, op, len, tot = 0;
-    cin >> n;
-    map<int, int> mp;
-    while (n--) {
-        cin >> op >> len;
+    int m, v, n, t;
+    int a[101], b[101], c[101], dp[201][201];
+    string path[201][201];
+    cin >> m >> v >> n;
 
-        if (op == 1) {
-            if (mp[len])
-                cout << "Already Exist" << endl;
-            else
-                mp[len]++, tot++;
-        }
-        if (op == 2) {
-            if (tot < 1) {
-                cout << "Empty" << endl;
-            } else if (mp[len]) {
-                cout << len << endl;
-                mp.erase(len), tot--;
-            } else {
-                mp[len]++;
-                auto itBe = mp.find(len);
-                auto itAf = itBe;
-                itAf++;
-                // 特判 begin, end
-                if (itBe == mp.begin()) {
-                    cout << itAf->first << endl;
-                    mp.erase(itAf);
-                } else if (itAf == mp.end()){
-                    cout << (--itBe)->first << endl;
-                    mp.erase(itBe);
+    for (int i = 1; i <= n; i++)
+        cin >> a[i] >> b[i] >> c[i];
 
-                    // 长度比较
-                }else if ((len - (--itBe)->first) > (itAf->first - len )) {
-                    cout << itAf->first << endl;
-                    mp.erase(itAf);
-                } else {
-                    cout << itBe->first << endl;
-                    mp.erase(itBe);
-                }
-                mp.erase(len);
-                tot--;
+    memset(dp, 0, sizeof dp);
+    // dp i j k  第 i 个物品，重量 j，阻力 k
+    for (int i = 1; i <= n; i++) {
+        for (int j = m; j >= a[i]; j--) {
+            for (int k = v; k >= b[i]; k--) {
+                t = dp[j - a[i]][k - b[i]] + c[i];
+                if (t > dp[j][k])
+                    path[j][k] = path[j - a[i]][k - b[i]] + char(i);
+                dp[j][k] = max(dp[j][k], t);
             }
         }
-
     }
+    cout << dp[m][v] << endl;
+    for (char cc : path[m][v])
+        cout << int(cc) << " ";
 }
