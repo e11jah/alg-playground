@@ -34,61 +34,52 @@ inline void write(__int128 x) {
 #define min3(a, b, c) min(a, min(b, c))
 #define max3(a, b, c) max(a, max(b, c))
 
-#define N 500010
-struct Trie {
-public:
-    int nex[N][26], cnt = 0;
-    bool exist[N];
-    Trie(){
-        memset(nex, 0, sizeof nex);
-        memset(exist, 0, sizeof exist);
-    }
-
-    void insert(string s) {  // 插入字符串
-        int p = 0, c;
-        for (int i = 0; s[i]; i++) {
-            c = s[i] - 'a';
-            if (!nex[p][c]) nex[p][c] = ++cnt;  // 如果没有，就添加结点
-            p = nex[p][c];
-        }
-        exist[p] = true;
-    }
-
-    bool find(string s) {  // 查找字符串
-        int p = 0, c;
-        for (int i = 0; i < s[i]; i++) {
-            c = s[i] - 'a';
-            if (!nex[p][c]) return false;
-            p = nex[p][c];
-        }
-        return exist[p];
-    }
-};
-
 int main() {
 //    ios::sync_with_stdio(false);
 //    std::cin.tie(nullptr);
-    int n, m;
+    int n, op, len, tot = 0;
     cin >> n;
-    map<string, int> mp;
-    Trie tr = Trie();
-
-    string t;
+    map<int, int> mp;
     while (n--) {
-        cin >> t;
-        tr.insert(t);
-    }
-    cin >> m;
-    while (m--) {
-        cin >> t;
-        if (mp[t]) {
-            cout << "REPEAT" << endl;
-            continue;
+        cin >> op >> len;
+
+        if (op == 1) {
+            if (mp[len])
+                cout << "Already Exist" << endl;
+            else
+                mp[len]++, tot++;
         }
-        if (tr.find(t))
-            cout << "OK" << endl;
-        else
-            cout << "WRONG" << endl;
-        mp[t]++;
+        if (op == 2) {
+            if (tot < 1) {
+                cout << "Empty" << endl;
+            } else if (mp[len]) {
+                cout << len << endl;
+                mp.erase(len), tot--;
+            } else {
+                mp[len]++;
+                auto itBe = mp.find(len);
+                auto itAf = itBe;
+                itAf++;
+                // 特判 begin, end
+                if (itBe == mp.begin()) {
+                    cout << itAf->first << endl;
+                    mp.erase(itAf);
+                } else if (itAf == mp.end()){
+                    cout << (--itBe)->first << endl;
+                    mp.erase(itBe);
+
+                    // 长度比较
+                }else if ((len - (--itBe)->first) > (itAf->first - len )) {
+                    cout << itAf->first << endl;
+                    mp.erase(itAf);
+                } else {
+                    cout << itBe->first << endl;
+                    mp.erase(itBe);
+                }
+                mp.erase(len);
+                tot--;
+            }
+        }
+
     }
 }
