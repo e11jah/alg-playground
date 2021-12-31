@@ -38,27 +38,37 @@ int main() {
     ios::sync_with_stdio(false);
 //    cin.tie(nullptr);
 //    std::cin.tie(nullptr);
-    int m, v, n, t;
-    int a[101], b[101], c[101], dp[201][201];
-    string path[201][201];
-    cin >> m >> v >> n;
+    int m, n, t;
+    cin >> m >>  n;
 
-    for (int i = 1; i <= n; i++)
+    int a[1001], b[1001], c[1001],  dp[1001];
+    map<int, int>k ;
+    map<int, vector<int>> mp;
+
+    for (int i = 1; i <= n; i++) {
         cin >> a[i] >> b[i] >> c[i];
+        // 分组内取号
+        k[c[i]]++;
+        // 记录分组 x 内序号为 x 的物品 idx
+        mp[c[i]].push_back(i);
+    }
 
     memset(dp, 0, sizeof dp);
-    // dp i j k  第 i 个物品，重量 j，阻力 k
-    for (int i = 1; i <= n; i++) {
-        for (int j = m; j >= a[i]; j--) {
-            for (int k = v; k >= b[i]; k--) {
-                t = dp[j - a[i]][k - b[i]] + c[i];
-                if (t > dp[j][k])
-                    path[j][k] = path[j - a[i]][k - b[i]] + char(i);
-                dp[j][k] = max(dp[j][k], t);
+    // dp i j k  第 i 个 组，重量 j，组内序号 x
+    for (int i = 1; k[i] > 0 && i < 1001; i++) {
+        for (int j = m; j >= 0; j--) {
+            // 分组内遍历
+            for (int x = 0; x < k[i]; x++) {
+                t = mp[i][x];
+                if (j >= a[t])
+                    /**
+                     * 决策
+                     * max(f[i-1][j], f[i-1][j-w1]+v1, f[i-1][j-w2]+v2, ...)
+                     */
+                    dp[j] = max(dp[j], dp[j-a[t]] + b[t]);
             }
         }
     }
-    cout << dp[m][v] << endl;
-    for (char cc : path[m][v])
-        cout << int(cc) << " ";
+
+    cout << dp[m];
 }
