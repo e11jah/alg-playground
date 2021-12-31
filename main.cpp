@@ -39,36 +39,20 @@ int main() {
 //    cin.tie(nullptr);
 //    std::cin.tie(nullptr);
     int m, n, t;
-    cin >> m >>  n;
+    cin >> n >> m >> t;
 
-    int a[1001], b[1001], c[1001],  dp[1001];
-    map<int, int>k ;
-    map<int, vector<int>> mp;
+    int a[201], b[201], dp[201][201];
 
-    for (int i = 1; i <= n; i++) {
-        cin >> a[i] >> b[i] >> c[i];
-        // 分组内取号
-        k[c[i]]++;
-        // 记录分组 x 内序号为 x 的物品 idx
-        mp[c[i]].push_back(i);
-    }
+    for (int i = 1; i <= n; i++)
+        cin >> a[i] >> b[i];
 
     memset(dp, 0, sizeof dp);
-    // dp i j k  第 i 个 组，重量 j，组内序号 x
-    for (int i = 1; k[i] > 0 && i < 1001; i++) {
-        for (int j = m; j >= 0; j--) {
-            // 分组内遍历
-            for (int x = 0; x < k[i]; x++) {
-                t = mp[i][x];
-                if (j >= a[t])
-                    /**
-                     * 决策
-                     * max(f[i-1][j], f[i-1][j-w1]+v1, f[i-1][j-w2]+v2, ...)
-                     */
-                    dp[j] = max(dp[j], dp[j-a[t]] + b[t]);
+    for (int i = 1; i <= n; i++) {
+        for (int j = m; j >= a[i]; j--) {
+            for (int k = t; k >= b[i]; k--) {
+                dp[j][k] = max(dp[j][k], dp[j - a[i]][k - b[i]] + 1);
             }
         }
     }
-
-    cout << dp[m];
+    cout << dp[m][t];
 }
