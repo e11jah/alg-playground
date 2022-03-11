@@ -6,7 +6,16 @@ using namespace std;
 
 using PII = pair<int, int>;
 
+
+void swap(int &a, int &b) {
+    int t = a;
+    a=b, b=t;
+}
+
 int main() {
+    vector<int> v1 = {2, 3};
+    swap(v1[0], v1[1]);
+    cout << v1[0] << endl;
     string s, e, step;
     cin >> s >> e;
     int sx, ex, sy, ey, ans=0;

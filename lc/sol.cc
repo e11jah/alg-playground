@@ -1,60 +1,54 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
 class Solution {
-    int n;
-    string data, ar;
+    int vis[10001], n;
 public:
-    void add(int l, int m, int r) {
-        int len = max(m - l, r - m), t = 0;
-        ar.clear();
-        for (int i = 1; i <= len; i++) {
-            if (m - i >= l)
-                t += (data[m - i] - '0');
-            if (r - i >= m)
-                t += (data[r - i] - '0');
+    int countHighestScoreNodes(vector<int>& parents) {
+        int t, prev, m=0, ans=0;
+        n = parents.size();
+        vector<int> ps;
+        ps.reserve(n);
+        for (int i = 0; i < n; i++) {
+            prev = parents[i];
+            parents[i] = -2;
 
-            ar.push_back('0' + (t % 10));
-            t /= 10;
+            t = getPoint(parents);
+            ps.push_back(t);
+            m = t > m ? t : m;
+
+            parents[i] = prev;
         }
-        if (t)
-            ar.push_back('0' + t);
-        reverse(ar.begin(), ar.end());
+        for (int p : ps)
+            ans = p == m ? ans+1 : ans;
+        return ans;
     }
 
-    int contain(const string &a, int r) {
-        if (a.size() > n - r)
-            return -1;
-        for (char j : a)
-            if (r >= n || data[r++] != j)
-                return -1;
-        return r;
+    int getPoint(vector<int> &v) {
+        memset(vis, 0, sizeof vis);
+        int p=0, t;
+        for (int i = 0; i < n; i++) {
+            if (v[i] != -2) {
+                t = dfs(v, i);
+                p = p == 0 ? t : p*t;
+            }
+        }
+        return p;
     }
 
-    bool dfs(int l, int m, int r) {
-        if (r == n)
-            return true;
+    int dfs(vector<int> &v, int pos) {
+        if (pos < 0 || vis[pos] == 1)
+            return 0;
 
-        // 前导 0
-        if ((data[l] == '0' && m - l > 1) || (data[m] == '0' && r - m > 1))
-            return false;
-        add(l, m, r);
-        int next = contain(ar, r);
-
-        if (next == -1)
-            return false;
-
-        return dfs(m, r, next);
-    }
-
-    bool isAdditiveNumber(string num) {
-        data = num;
-        n = num.size();
-        for (int m = 1; m < n; m++)
-            for (int r = m + 1; r < n; r++)
-                if (dfs(0, m, r))
-                    return true;
-
-        return false;
+        vis[pos]=1;
+        return 1 + dfs(v, v[pos]);
     }
 };
 
-
-
+int main() {
+    vector<int> v{-1,2,0,2,0};
+    Solution s = Solution();
+    cout << s.countHighestScoreNodes(v) << endl;
+}
