@@ -76,6 +76,7 @@ ll askRange(ll l, ll r)
     return (r + 1) * ask(sum, r) - l * ask(sum, l - 1) - (ask(a2, r) - ask(a2, l - 1));
 }
 
+// 树状数组 区间修改+查询
 int main()
 {
     RLL2(n, w);

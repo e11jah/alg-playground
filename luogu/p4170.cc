@@ -7,6 +7,8 @@
 #include <queue>
 #include <algorithm>
 #include <iostream>
+#include <map>
+#include <climits>
 
 #define PLN(n) printf("%lld\n", n)
 #define PLN2(a, b) printf("%lld %lld\n", a, b)
@@ -29,48 +31,36 @@
 #define VP vector<P>
 
 using namespace std;
+
 typedef long long ll;
 typedef pair<ll, ll> P;
 
-const ll N = 5e5 + 5;
-const ll MOD = 998244353998244353;
+const ll N = 1e3 + 10;
+const ll MOD = 1e9+7;
 
-ll n, m, sum[N];
-int a[N];
+ll dp[55][55];
 
-int lowbit(int x) {
-    // 取最低位 1 即其后所有 0
-    return x&-x;
-}
-
-void add(int x, int k) {
-    while (x<=n)
-        sum[x]+=k,x+=lowbit(x);
-}
-
-ll ask(int x) {
-    ll ans=0;
-    while(x>=1)
-        ans+=sum[x],x-=lowbit(x);
-    return ans;
-}
-// 树状数组单点查询
-int main() {
-    RLL2(n,m);  
-    sum[0]=0;
-    int t;
-    FOR(i,1,n) {
-        scanf("%d", &t);
-        add(i,t);
-    }
-
-    ll op, a,b;
-    FOR(i,1,m) {
-        RLL3(op,a,b);
-        if (op==1) {
-            add(a,b);
-        } else {
-            PLN(ask(b)-ask(a-1));
+// 涂色 区间 dp
+void solve() {
+    string target;
+    cin>>target;
+    ll n = target.size();
+    FOR(i,0,n)
+        FOR(j,0,n)
+            dp[i][j]=i==j?1:55;
+    FOR(len,1,n-1) {
+        for (ll i = 0; i + len <=n; i++) {
+            ll j = i+len;
+            if (target[i]==target[j]) 
+                dp[i][j]=min(dp[i+1][j],dp[i][j-1]);
+                // dp[i][j]=len==2?1:min(min(dp[i+1][j],dp[i][j-1]),dp[i+1][j-1]+1);
+            else for(ll k = i; k < j; k++)
+                dp[i][j]=min(dp[i][j],dp[i][k]+dp[k+1][j]);  
         }
     }
+    PLN(dp[0][n-1]);
+}
+
+int main() {
+    solve();
 }

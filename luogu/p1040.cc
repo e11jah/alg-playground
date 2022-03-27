@@ -5,7 +5,6 @@
 #include <string>
 #include <math.h>
 #include <queue>
-#include <algorithm>
 #include <iostream>
 
 #define PLN(n) printf("%lld\n", n)
@@ -18,9 +17,6 @@
 #define RLL3(a, b, c) scanf("%lld %lld %lld", &a, &b, &c)
 #define RLL4(a, b, c, d) scanf("%lld %lld %lld %lld", &a, &b, &c, &d)
 
-#define RS(n) scanf("%s", n)
-#define PC(s) printf("%c", s)
-#define PP() putchar(' ')
 #define PS(s) printf("%s\n", s)
 #define MM(a, b) memset(a, b, sizeof(a));
 #define FOR(x, a, b) for (ll x = a; x <= b; x++)
@@ -29,48 +25,53 @@
 #define VP vector<P>
 
 using namespace std;
+
 typedef long long ll;
 typedef pair<ll, ll> P;
 
-const ll N = 5e5 + 5;
-const ll MOD = 998244353998244353;
+const ll N = 35;
+const ll mod = 1e9 + 7;
 
-ll n, m, sum[N];
-int a[N];
+ll n, k=0, dp[N][N], root[N][N];
+unsigned char vis[N];
+ll fri[N][2];
+vector<int> conn[N];
 
-int lowbit(int x) {
-    // 取最低位 1 即其后所有 0
-    return x&-x;
+void dfs(ll l, ll r) {
+    if (l<1 || r>n || r<l || l>r)
+        return;
+    ll m = root[l][r];
+    printf("%lld ", m);
+    if (l == r)
+        return;
+    // printf("l %lld m %lld r %lld\n", l,m,r);
+    dfs(l,m-1);
+    dfs(m+1,r);
 }
 
-void add(int x, int k) {
-    while (x<=n)
-        sum[x]+=k,x+=lowbit(x);
-}
-
-ll ask(int x) {
-    ll ans=0;
-    while(x>=1)
-        ans+=sum[x],x-=lowbit(x);
-    return ans;
-}
-// 树状数组单点查询
+// 区间 dp
+// 树形 dp
 int main() {
-    RLL2(n,m);  
-    sum[0]=0;
-    int t;
+    RLL(n);
     FOR(i,1,n) {
-        scanf("%d", &t);
-        add(i,t);
+        RLL(dp[i][i]);
+        root[i][i]=i;
     }
 
-    ll op, a,b;
-    FOR(i,1,m) {
-        RLL3(op,a,b);
-        if (op==1) {
-            add(a,b);
-        } else {
-            PLN(ask(b)-ask(a-1));
+    ll j;
+    FOR(len,1,n) {
+        for(ll i=1;i+len<=n;i++) {
+            j=i+len;
+            dp[i][j]=dp[i][i]+dp[j][j];
+            root[i][j]=i;
+            FOR(k,i,j) {
+                if (dp[i][j] < dp[i][k-1]*dp[k+1][j]+dp[k][k]) {
+                    dp[i][j]=dp[i][k-1]*dp[k+1][j]+dp[k][k];
+                    root[i][j]=k;
+                }
+            }
         }
     }
+    PLN(dp[1][n]);
+    dfs(1,n);
 }

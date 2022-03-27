@@ -7,12 +7,18 @@
 #include <queue>
 #include <algorithm>
 #include <iostream>
+#include <map>
 
+#define PIN(n) printf("%d\n", n)
 #define PLN(n) printf("%lld\n", n)
 #define PLN2(a, b) printf("%lld %lld\n", a, b)
 #define PLN3(a, b, c) printf("%lld %lld %lld\n", a, b, c)
 #define PLN4(a, b, c, d) printf("%lld %lld %lld %lld\n", a, b, c, d)
 
+#define RI(n) scanf("%d", &n)
+#define RI2(a, b) scanf("%d %d", &a, &b)
+#define RI3(a, b, c) scanf("%d %d %d", &a, &b, &c)
+#define RI4(a, b, c, d) scanf("%d %d %d %d", &a, &b, &c, &d)
 #define RLL(n) scanf("%lld", &n)
 #define RLL2(a, b) scanf("%lld %lld", &a, &b)
 #define RLL3(a, b, c) scanf("%lld %lld %lld", &a, &b, &c)
@@ -29,48 +35,41 @@
 #define VP vector<P>
 
 using namespace std;
+
 typedef long long ll;
 typedef pair<ll, ll> P;
 
-const ll N = 5e5 + 5;
-const ll MOD = 998244353998244353;
+const ll N = 1e3 + 10;
+const ll MOD = 1e9 + 7;
 
-ll n, m, sum[N];
-int a[N];
+void solve()
+{
+    // sum 累加所有题目时间, f 开20*60以上
+    ll s[4], ans = 0, a[100], f[2000], sum;
+    RLL4(s[0], s[1], s[2], s[3]);
+    FOR(i, 0, 3)
+    {
+        MM(f, 0);
 
-int lowbit(int x) {
-    // 取最低位 1 即其后所有 0
-    return x&-x;
-}
-
-void add(int x, int k) {
-    while (x<=n)
-        sum[x]+=k,x+=lowbit(x);
-}
-
-ll ask(int x) {
-    ll ans=0;
-    while(x>=1)
-        ans+=sum[x],x-=lowbit(x);
-    return ans;
-}
-// 树状数组单点查询
-int main() {
-    RLL2(n,m);  
-    sum[0]=0;
-    int t;
-    FOR(i,1,n) {
-        scanf("%d", &t);
-        add(i,t);
-    }
-
-    ll op, a,b;
-    FOR(i,1,m) {
-        RLL3(op,a,b);
-        if (op==1) {
-            add(a,b);
-        } else {
-            PLN(ask(b)-ask(a-1));
+        sum = 0;
+        FOR(j, 1, s[i])
+        {
+            RLL(a[j]);
+            sum += a[j];
         }
+        FOR(j, 1, s[i])
+        {
+            for (ll k = sum / 2; k >= a[j]; k--)
+                f[k] = max(f[k], f[k - a[j]] + a[j]);
+        }
+        ans += sum - f[sum / 2];
     }
+
+    PLN(ans);
+}
+// 01 背包
+int main()
+{
+    solve();
+    return 0;
 }

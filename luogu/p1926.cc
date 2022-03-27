@@ -7,6 +7,7 @@
 #include <queue>
 #include <algorithm>
 #include <iostream>
+#include <map>
 
 #define PLN(n) printf("%lld\n", n)
 #define PLN2(a, b) printf("%lld %lld\n", a, b)
@@ -29,48 +30,49 @@
 #define VP vector<P>
 
 using namespace std;
+
 typedef long long ll;
 typedef pair<ll, ll> P;
 
-const ll N = 5e5 + 5;
-const ll MOD = 998244353998244353;
+const ll N = 1e3 + 10;
+const ll MOD = 1e9+7;
 
-ll n, m, sum[N];
-int a[N];
+ll n,m,k,r, a[12], w[12], p[12],dp[160];
 
-int lowbit(int x) {
-    // 取最低位 1 即其后所有 0
-    return x&-x;
-}
+// 01 背包
+void solve() {
+    MM(dp,0);
+    RLL4(n,m,k,r);
+    FOR(i,1,n)
+        RLL(a[i]);
+    sort(a+1,a+1+n);
+    FOR(i,1,m)
+        RLL(w[i]);
 
-void add(int x, int k) {
-    while (x<=n)
-        sum[x]+=k,x+=lowbit(x);
-}
+    FOR(i,1,m)
+        RLL(p[i]);
 
-ll ask(int x) {
-    ll ans=0;
-    while(x>=1)
-        ans+=sum[x],x-=lowbit(x);
-    return ans;
-}
-// 树状数组单点查询
-int main() {
-    RLL2(n,m);  
-    sum[0]=0;
-    int t;
-    FOR(i,1,n) {
-        scanf("%d", &t);
-        add(i,t);
-    }
-
-    ll op, a,b;
-    FOR(i,1,m) {
-        RLL3(op,a,b);
-        if (op==1) {
-            add(a,b);
-        } else {
-            PLN(ask(b)-ask(a-1));
+    // 01 背包
+    FOR(i,1,m)
+        for (ll j = r; j >= w[i];j--)
+            dp[j]=max(dp[j],dp[j-w[i]]+p[i]);
+    ll rest=r,c=0;  
+    FOR(i,1,r)
+        if (dp[i]>=k) {
+            rest-=i;
+            break;
         }
+    // cout << "re "<<rest<<endl;
+    FOR(i,1,n) {
+        rest -= a[i];
+        if (rest<=0)
+            break;
+        c++;
     }
+    PLN(c);
+}
+
+int main() {
+    solve();
+    return 0;
 }

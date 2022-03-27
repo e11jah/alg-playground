@@ -6,3 +6,6 @@ cmake-build-debug
 *.in
 *.out
 build
+
+luogu/**/*
+!luogu/**/*.cc

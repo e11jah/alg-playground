@@ -62,7 +62,7 @@ vector<ll> dis;
 ll idx(ll x) {
     return lower_bound(dis.begin(), dis.end(), x)-dis.begin()+1;
 }
-
+// 树状数组 + 离散化
 int main()
 {
     RLL2(n, t);

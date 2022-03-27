@@ -48,6 +48,7 @@ struct Movie {
     int subt;
 };
 
+// 离散化
 int main () {
     RLL(n);
     ll a[N], c[N];
@@ -87,10 +88,6 @@ int main () {
             return l.subt < r.subt;
         return l.voi < r.voi;
     });
-    // FOR(i,1,n)
-    //     printf("c: %lld : %lld \n",a[i], c[idx(a[i])]);
-    // for (auto m:points)
-    //     printf("%lld %d,%d\n",m.id,m.voi,m.subt);
 
     PLN(points[m].id);
     return 0;
