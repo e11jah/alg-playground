@@ -11,7 +11,7 @@ void add(int a, int b) {
     nex[idx]=h[a];
     h[a]=idx++;
 }
-
+// 有向图 最短距离 bfs
 void solve() {
     memset(h, -1, sizeof(h));
 

@@ -38,7 +38,7 @@ void solve() {
     }
     cout << d[n][m];
 }
-
+// 走迷宫 bfs
 int main() {
     solve();
     return 0;

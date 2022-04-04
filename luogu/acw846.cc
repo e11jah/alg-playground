@@ -36,7 +36,7 @@ int dfs(int u)
 
     return s;
 }
-
+// 树的重心
 void solve()
 {
     cin >> n;
