@@ -9,3 +9,4 @@ build
 
 luogu/**/*
 !luogu/**/*.cc
+tempCodeRunnerFile.cc
