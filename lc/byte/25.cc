@@ -20,6 +20,34 @@ struct ListNode {
  // k 个一组翻转链表 递归 栈 记录节点值
 class Solution {
 public:
+    ListNode* solve2(ListNode* head, int k) {
+        ListNode* r = new ListNode();
+        ListNode* c=r;
+        ListNode* t;
+        vector<ListNode*> s;
+        while (1) { 
+            t=head;
+            while (s.size()<k&&t) {
+                s.push_back(t),t=t->next;
+            }
+            // 不够 k 个
+            if (s.size()<k) {
+                c->next=head;
+                break;
+            }
+
+            while (!s.empty()) {
+                c->next = s.back();
+                s.pop_back();
+                c=c->next;
+            }
+            // 链接余下部分
+            c->next=t;
+            head=t;
+        }
+
+        return r->next;
+    }
     ListNode* reverseKGroup(ListNode* head, int k) {
         vector<int> v(k,0);
         ListNode * cur = head;
