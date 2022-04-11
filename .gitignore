@@ -7,6 +7,14 @@ cmake-build-debug
 *.out
 build
 
+exam/bfs/*
+!exam/bfs/*.cc
+exam/dp/*
+!exam/dp/*.cc
+exam/union/*
+!exam/union/*.cc
+acw/union/*
+!acw/union/*.cc
 luogu/**/*
 !luogu/**/*.cc
 tempCodeRunnerFile.cc
