@@ -43,7 +43,7 @@ void solve() {
         // 放出
         b[v[j]]--;
 
-        // 遍历邻接表
+        // 遍历邻接表而非遍历所有节点，加快联通
         for (int d = h[v[j]]; d != -1; d=nex[d]) {
             if (!b[to[d]]) {
                 x=find(v[j]),y=find(to[d]);
