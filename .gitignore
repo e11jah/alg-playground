@@ -13,8 +13,14 @@ exam/dp/*
 !exam/dp/*.cc
 exam/union/*
 !exam/union/*.cc
+exam/merge_sort/*
+!exam/merge_sort/*.cc
+exam/string_hash/*
+!exam/string_hash/*.cc
 acw/union/*
 !acw/union/*.cc
 luogu/**/*
 !luogu/**/*.cc
 tempCodeRunnerFile.cc
+tempCodeRunnerFile.cpp
+tempCodeRunnerFile
