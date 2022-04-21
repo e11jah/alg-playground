@@ -1,3 +1,6 @@
+#include <vector>
+using namespace std;
+
 #define FOR(i,l,r) for(int i = l; i <=r; i++)
 class Solution {
 public:

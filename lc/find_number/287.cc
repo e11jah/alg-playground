@@ -1,3 +1,5 @@
+#include <vector>
+using namespace std;
 class Solution {
 public:
     // 寻找重复数
