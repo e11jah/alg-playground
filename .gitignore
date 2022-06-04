@@ -21,8 +21,7 @@ acw/union/*
 !acw/union/*.cc
 game/**/*
 !game/**/*.cc
-structure/seg_tree/*
-!structure/seg_tree/*.cc
+
 luogu/**/*
 !luogu/**/*.cc
 tempCodeRunnerFile.cc
